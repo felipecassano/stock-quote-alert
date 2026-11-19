@@ -1,28 +1,42 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.Globalization;
 using StockQuoteAlert;
-using Quote;
+using StockQuoteAlert.Services;
+using StockQuoteAlert.Models;
 
-QuoteService s = new QuoteService();
-
-var response = await s.GetQuote();
-
-Console.WriteLine(response);
 
 Ticker t = new Ticker();
-t.Execute(args);
+var argsResponse = t.Validate(args);
+
+if (argsResponse is null)
+{
+    return;
+}
+
+Console.WriteLine("testando");
+QuoteService s = new QuoteService();
+
+var response = await s.GetQuoteAsync(argsResponse.Ticker);
+
+if (response is null)
+{
+
+}
+Console.WriteLine(response);
+
+
 
 namespace StockQuoteAlert
 {
     public class Ticker
     {
 
-        public void Execute(string[] args)
+        public Args? Validate(string[] args)
         {
             if (args.Length != 3)
             {
                 Console.WriteLine("Argumento passado deve ser igual a 3");
-                return;
+                return null;
             }
             decimal sellPrice;
             decimal buyPrice;
@@ -32,12 +46,14 @@ namespace StockQuoteAlert
             if (!successSellPrice)
             {
                 Console.WriteLine(" Erro ao tentar converter o preço de venda");
-                return;
+                return null;
+
             }
             if (!successBuyPrice)
             {
                 Console.WriteLine(" Erro ao tentar converter o preço de compra");
-                return;
+                return null;
+
             }
 
             if (sellPrice <= 0 || buyPrice <= 0 || buyPrice == sellPrice || sellPrice < buyPrice)
@@ -46,7 +62,8 @@ namespace StockQuoteAlert
                 Console.WriteLine("Valor de venda não pode ser 0");
                 Console.WriteLine("Valor de compra não pode ser 0");
                 Console.WriteLine("Valor de venda deve ser maior que o valor de compra");
-                return;
+                return null;
+
 
             }
 
@@ -54,9 +71,14 @@ namespace StockQuoteAlert
             if (string.IsNullOrWhiteSpace(ticker))
             {
                 Console.WriteLine("O nome da ação não pode ser nulo");
-                return;
+                return null;
+
             }
-            Console.WriteLine($"O {ticker} tem preço de venda: {sellPrice} e preço de compra: {buyPrice} ");
+            Console.WriteLine($"Usuário quer analisar a ação {ticker} com preço de venda: {sellPrice} e preço de compra: {buyPrice} ");
+            return new Args(Ticker: ticker, SellPrice: sellPrice, BuyPrice: buyPrice);
+
+
+
 
         }
 

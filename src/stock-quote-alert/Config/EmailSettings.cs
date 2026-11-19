@@ -1,6 +1,8 @@
-public class EmailSettings
-{
+namespace StockQuoteAlert.Config;
 
+public class EmailSettings
+
+{
     public string? SmtpServer
     {
         get; set;
