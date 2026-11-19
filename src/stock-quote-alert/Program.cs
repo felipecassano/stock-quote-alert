@@ -1,6 +1,13 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using System.Globalization;
 using StockQuoteAlert;
+using Quote;
+
+QuoteService s = new QuoteService();
+
+var response = await s.GetQuote();
+
+Console.WriteLine(response);
 
 Ticker t = new Ticker();
 t.Execute(args);
