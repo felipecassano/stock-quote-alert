@@ -18,7 +18,11 @@ public class QuoteService
     private const string BaseUrl = "https://brapi.dev/api";
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     private HttpClient _httpClient;
-
+    public QuoteService(HttpClient httpClient, IConfiguration config)
+    {
+        _httpClient = httpClient;
+        _httpClient.Timeout = TimeSpan.FromSeconds(30);
+    }
     public async Task<Quote?> GetQuoteAsync(string Ticker)
     {
         var config = new ConfigurationBuilder()
@@ -26,16 +30,11 @@ public class QuoteService
           .Build();
         try
         {
-            _httpClient = new HttpClient
-
-            {
-                Timeout = TimeSpan.FromSeconds(30)
-            };
             _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", config["BRAPI_KEY"]);
             var url = $"{BaseUrl}/quote/{Ticker}";
             Console.WriteLine(url);
 
-
+        
             HttpResponseMessage response = await _httpClient.GetAsync(url);
 
             if (!response.IsSuccessStatusCode)

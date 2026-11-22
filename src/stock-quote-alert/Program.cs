@@ -3,26 +3,30 @@ using System.Globalization;
 using StockQuoteAlert;
 using StockQuoteAlert.Services;
 using StockQuoteAlert.Models;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using StockQuoteAlert.Config;
+using StockQuoteAlert.Interface;
 
+var argsResponse = new Ticker().Validate(args);
+if (argsResponse is null) return;
 
-Ticker t = new Ticker();
-var argsResponse = t.Validate(args);
+var builder = Host.CreateApplicationBuilder(args);
+builder.Configuration.AddUserSecrets<Program>();
+builder.Services.AddSingleton(argsResponse);
+builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
-if (argsResponse is null)
+builder.Services.AddHttpClient<QuoteService>(client =>
 {
-    return;
-}
+    client.BaseAddress = new Uri("https://brapi.dev/api/");
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+builder.Services.AddHostedService<PeriodicHostedService>();
 
-Console.WriteLine("testando");
-QuoteService s = new QuoteService();
-
-var response = await s.GetQuoteAsync(argsResponse.Ticker);
-
-if (response is null)
-{
-
-}
-Console.WriteLine(response);
+using var host = builder.Build();
+await host.RunAsync();
 
 
 
