@@ -1,5 +1,6 @@
 using MailKit;
 using MailKit.Net.Smtp;
+using Microsoft.Extensions.Options;
 using MimeKit;
 using StockQuoteAlert.Config;
 using StockQuoteAlert.Interface;
@@ -11,9 +12,9 @@ public class EmailSender : IEmailSender
 {
 
     private readonly EmailSettings _emailSettings;
-    public EmailSender(EmailSettings emailSettings)
+    public EmailSender(IOptions<EmailSettings> options)
     {
-        _emailSettings = emailSettings;
+        _emailSettings = options.Value;
     }
 
     public async Task SendEmailAsync(string email, string subject, string message)

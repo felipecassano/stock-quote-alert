@@ -30,8 +30,8 @@ class PeriodicHostedService : BackgroundService
         ) try
             {
                 await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
-                SampleService sampleService = asyncScope.ServiceProvider.GetRequiredService<SampleService>();
-                await sampleService.DoSomethingAsync();
+                StockAlertService sampleService = asyncScope.ServiceProvider.GetRequiredService<StockAlertService>();
+                await sampleService.CheckAsync();
                 _logger.LogInformation(
                         $"Executed PeriodicHostedService - Count: {_executionCount}");
             }

@@ -6,7 +6,7 @@ namespace StockQuoteAlert.Services;
 public class Ticker
 {
 
-    public Args? Validate(string[] args)
+    public Args? ValidateArgs(string[] args)
     {
         if (args.Length != 3)
         {
@@ -33,10 +33,14 @@ public class Ticker
 
         if (sellPrice <= 0 || buyPrice <= 0 || buyPrice == sellPrice || sellPrice < buyPrice)
         {
-            Console.WriteLine("Regras para os valores:");
-            Console.WriteLine("Valor de venda não pode ser 0");
-            Console.WriteLine("Valor de compra não pode ser 0");
-            Console.WriteLine("Valor de venda deve ser maior que o valor de compra");
+            Console.WriteLine("Regras para as entradas:");
+            Console.Write("Valor de venda não pode ser 0 ");
+            Console.WriteLine(sellPrice <= 0 ? "X" : "✓");
+            Console.Write("Valor de compra não pode ser 0 ");
+            Console.WriteLine(buyPrice <= 0 ? "X" : "✓");
+            Console.Write("Valor de venda deve ser maior que o valor de compra ");
+            Console.WriteLine(sellPrice <= buyPrice ? "X" : "✓");
+
             return null;
 
 
