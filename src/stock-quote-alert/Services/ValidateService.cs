@@ -65,6 +65,7 @@ public class ArgsParser
 
         }
         Console.WriteLine($"Usuário quer analisar a ação {ticker} com preço de venda: {parsedSellPrice} e preço de compra: {parsedBuyPrice} ");
+        Console.WriteLine("Pressione Ctrl+C para encerrar.");
         return new Args(Ticker: ticker, SellPrice: parsedSellPrice, BuyPrice: parsedBuyPrice);
 
 

@@ -5,7 +5,7 @@ namespace stock_quote_alert.Tests;
 
 public class ArgsParserTest
 {
-    private readonly ArgsParser _ticker = new ArgsParser();
+    private readonly ArgsParser _parser = new ArgsParser();
 
     [Fact]
     public void TestandoArgumentosValidos()
@@ -14,7 +14,7 @@ public class ArgsParserTest
         string[] args = ["PETR4", "22.67", "22.59"];
 
         // Ação
-        Args? result = _ticker.ValidateArgs(args);
+        Args? result = _parser.ValidateArgs(args);
 
         //  Validação
         Assert.NotNull(result);
@@ -23,5 +23,7 @@ public class ArgsParserTest
         Assert.Equal(22.59m, result.BuyPrice);
 
         //  Padrão AAA (Arrange, Act, Assert)
+
     }
+
 }
