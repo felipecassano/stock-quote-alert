@@ -17,7 +17,7 @@ public class PeriodicHostedService : BackgroundService
     {
         _factory = factory;
         _logger = logger;
-        _period = TimeSpan.FromSeconds(configuration.GetValue<int>("PollingIntervalSeconds", 60));
+        _period = TimeSpan.FromSeconds(configuration.GetValue<int>("PollingIntervalSeconds", 30));
     }
 
 
