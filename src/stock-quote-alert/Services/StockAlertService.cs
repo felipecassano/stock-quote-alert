@@ -20,22 +20,33 @@ public class StockAlertService
         _logger = logger;
     }
 
-    public async Task CheckAsync()
+    public async Task<int> CheckAsync(int currentState)
     {
-        await Task.Delay(100);
         _logger.LogInformation("Sample Service did something");
         var Quote = await _quoteService.GetQuoteAsync(_args.Ticker);
-        if (Quote is null) return;
-        decimal cotacaoAtual = Quote.RegularMarketPrice;
+        if (Quote is null) return currentState;
+
+        decimal cotacao = Quote.RegularMarketPrice;
         Console.WriteLine($"Cotação: {Quote.RegularMarketPrice}");
 
-        if (cotacaoAtual > _args.SellPrice)
+        int newState = cotacao > _args.SellPrice ? 1 : cotacao < _args.BuyPrice ? -1 : 0;
+
+        if (newState != currentState)
         {
-            Console.WriteLine("Enviando email para venda");
+            if (newState == 1)
+            {
+                Console.WriteLine("Email enviado para venda");
+            }
+            if (newState == -1)
+            {
+                Console.WriteLine("Email enviado para compra");
+
+            }
+
         }
-        if (cotacaoAtual < _args.BuyPrice)
-        {
-            Console.WriteLine("Enviando email para compra");
-        }
+        _logger.LogInformation("Nenhum email foi enviado, ação se manteve no mesmo estado do anterior");
+
+        return newState;
+
     }
 }

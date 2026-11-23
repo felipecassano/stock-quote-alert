@@ -20,7 +20,7 @@ public class PeriodicHostedService : BackgroundService
     private readonly TimeSpan _period = TimeSpan.FromSeconds(5);
 
     // Se estiver em 0 é pq o preço está no meio, 1 está em alta (venda) e -1 está em baixa (comopra)
-    private int _executionCount = 0;
+    private int _stateMachine = 0;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -30,10 +30,10 @@ public class PeriodicHostedService : BackgroundService
         ) try
             {
                 await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
-                StockAlertService sampleService = asyncScope.ServiceProvider.GetRequiredService<StockAlertService>();
-                await sampleService.CheckAsync();
+                StockAlertService stockAlertService = asyncScope.ServiceProvider.GetRequiredService<StockAlertService>();
+                _stateMachine = await stockAlertService.CheckAsync(_stateMachine);
                 _logger.LogInformation(
-                        $"Executed PeriodicHostedService - Count: {_executionCount}");
+                        "Executed PeriodicHostedService ");
             }
 
             catch (Exception ex)
