@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using StockQuoteAlert.Interfaces;
 
@@ -18,11 +19,13 @@ public class QuoteService : IQuoteService
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     private readonly HttpClient _httpClient;
     private readonly ILogger _logger;
+    private readonly IHostApplicationLifetime _lifetime;
 
-    public QuoteService(HttpClient httpClient, ILogger<QuoteService> logger)
+    public QuoteService(HttpClient httpClient, ILogger<QuoteService> logger, IHostApplicationLifetime lifetime)
     {
         _httpClient = httpClient;
         _logger = logger;
+        _lifetime = lifetime;
     }
 
     public async Task<Quote?> GetQuoteAsync(string Ticker)
@@ -40,7 +43,8 @@ public class QuoteService : IQuoteService
                 if (response.StatusCode.ToString() == "NotFound")
                 {
                     _logger.LogInformation($"Ativo {Ticker} não encontrado. Encerrando a aplicação");
-                    Environment.Exit(1);
+                    Environment.ExitCode = 1;                                // define o código de saída...
+                    _lifetime.StopApplication();
                 }
                 return null;
             }

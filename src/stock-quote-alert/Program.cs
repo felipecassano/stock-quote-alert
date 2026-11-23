@@ -43,4 +43,4 @@ builder.Services.AddHostedService<PeriodicHostedService>();
 
 using var host = builder.Build();
 await host.RunAsync();
-return 0;
+return Environment.ExitCode;
