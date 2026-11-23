@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -9,15 +10,16 @@ public class PeriodicHostedService : BackgroundService
 {
     private readonly ILogger<PeriodicHostedService> _logger;
     private readonly IServiceScopeFactory _factory;
+    private readonly TimeSpan _period;
+
     public PeriodicHostedService(
-        ILogger<PeriodicHostedService> logger, IServiceScopeFactory factory)
+        ILogger<PeriodicHostedService> logger, IServiceScopeFactory factory, IConfiguration configuration)
     {
         _factory = factory;
         _logger = logger;
+        _period = TimeSpan.FromSeconds(configuration.GetValue<int>("PollingIntervalSeconds", 60));
     }
 
-
-    private readonly TimeSpan _period = TimeSpan.FromSeconds(5);
 
     // Se estiver em 0 é pq o preço está no meio, 1 está em alta (venda) e -1 está em baixa (comopra)
     private int _stateMachine = 0;
@@ -25,9 +27,10 @@ public class PeriodicHostedService : BackgroundService
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         using PeriodicTimer timer = new PeriodicTimer(_period);
-        while (
-            !stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken)
-        ) try
+
+        do
+        {
+            try
             {
                 await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
                 StockAlertService stockAlertService = asyncScope.ServiceProvider.GetRequiredService<StockAlertService>();
@@ -35,10 +38,13 @@ public class PeriodicHostedService : BackgroundService
                 _logger.LogInformation(
                         "Executed PeriodicHostedService ");
             }
-
             catch (Exception ex)
             {
                 _logger.LogInformation($"Falha ao executar o PeriodicHostedService. Mensagem: {ex.Message} ");
             }
+
+        } while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken));
+
+
     }
 }
