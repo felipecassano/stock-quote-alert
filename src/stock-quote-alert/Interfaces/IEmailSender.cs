@@ -1,4 +1,4 @@
-namespace StockQuoteAlert.Interface;
+namespace StockQuoteAlert.Interfaces;
 
 public interface IEmailSender
 {

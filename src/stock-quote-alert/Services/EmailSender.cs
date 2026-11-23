@@ -3,7 +3,7 @@ using MailKit.Net.Smtp;
 using Microsoft.Extensions.Options;
 using MimeKit;
 using StockQuoteAlert.Config;
-using StockQuoteAlert.Interface;
+using StockQuoteAlert.Interfaces;
 
 namespace StockQuoteAlert.Services;
 
@@ -30,12 +30,17 @@ public class EmailSender : IEmailSender
         else
             emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message };
 
-
         using (var client = new SmtpClient())
             try
             {
+                //  Usar o nome de usuário caso seja necessário. Se for pra usar o Email, deixar o nome de usuário vazio em appsettings.json
+                var user = string.IsNullOrWhiteSpace(_emailSettings.Username)
+      ? _emailSettings.FromEmail
+      : _emailSettings.Username;
+
+                Console.WriteLine($"user: {user}");
                 await client.ConnectAsync(_emailSettings.SmtpServer, _emailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
-                await client.AuthenticateAsync(_emailSettings.FromEmail, _emailSettings.Password);
+                await client.AuthenticateAsync(user, _emailSettings.Password);
                 await client.SendAsync(new SendRequest(emailMessage));
             }
             catch (Exception ex)

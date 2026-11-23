@@ -5,7 +5,7 @@ namespace stock_quote_alert.Tests;
 
 public class ValidateServiceTest
 {
-    private readonly Ticker _ticker = new Ticker();
+    private readonly ArgsParser _ticker = new ArgsParser();
 
     [Fact]
     public void TestandoArgumentosValidos()

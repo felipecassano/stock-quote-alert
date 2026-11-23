@@ -120,7 +120,7 @@ src/stock-quote-alert/
 ├── appsettings.json
 ├── Config/                       # EmailSettings
 ├── Models/                       # Args
-├── Types/                        # IEmailSender
+├── Interfaces/                   # IEmailSender
 └── Services/
     ├── ValidateService.cs        # validação dos argumentos de entrada
     ├── QuoteService.cs           # integração com a brapi.dev

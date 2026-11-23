@@ -35,12 +35,11 @@ public class PeriodicHostedService : BackgroundService
                 await using AsyncServiceScope asyncScope = _factory.CreateAsyncScope();
                 StockAlertService stockAlertService = asyncScope.ServiceProvider.GetRequiredService<StockAlertService>();
                 _stateMachine = await stockAlertService.CheckAsync(_stateMachine);
-                _logger.LogInformation(
-                        "Executed PeriodicHostedService ");
+
             }
             catch (Exception ex)
             {
-                _logger.LogInformation($"Falha ao executar o PeriodicHostedService. Mensagem: {ex.Message} ");
+                _logger.LogError($"Falha ao executar o PeriodicHostedService. Mensagem: {ex.Message} ");
             }
 
         } while (!stoppingToken.IsCancellationRequested && await timer.WaitForNextTickAsync(stoppingToken));

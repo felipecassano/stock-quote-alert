@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Logging;
-using StockQuoteAlert.Interface;
+using Microsoft.Extensions.Options;
+using StockQuoteAlert.Config;
+using StockQuoteAlert.Interfaces;
 using StockQuoteAlert.Models;
 
 namespace StockQuoteAlert.Services;
@@ -10,10 +12,13 @@ public class StockAlertService
     private readonly QuoteService _quoteService;
     private readonly IEmailSender _emailSender;
     private readonly ILogger<StockAlertService> _logger;
+    private readonly EmailSettings _emailSettings;
+
 
     public StockAlertService(Args args, QuoteService quoteService,
-                               IEmailSender emailSender, ILogger<StockAlertService> logger)
+                               IEmailSender emailSender, ILogger<StockAlertService> logger, IOptions<EmailSettings> options)
     {
+        _emailSettings = options.Value;
         _args = args;
         _quoteService = quoteService;
         _emailSender = emailSender;
@@ -26,7 +31,7 @@ public class StockAlertService
         if (Quote is null) return currentState;
 
         decimal cotacao = Quote.RegularMarketPrice;
-        Console.WriteLine($"Cotação: {Quote.RegularMarketPrice}");
+        _logger.LogInformation($"Cotação: {Quote.RegularMarketPrice}");
 
         int newState = cotacao > _args.SellPrice ? 1 : cotacao < _args.BuyPrice ? -1 : 0;
 
@@ -39,7 +44,7 @@ public class StockAlertService
                 var body = $"<p>A ação <b>{_args.Ticker}</b> está cotada a <b>R$ {cotacao:N2}</b>, " +
                $"acima do preço de venda configurado (R$ {_args.SellPrice:N2}).</p>";
 
-                await _emailSender.SendEmailAsync("felipe.cassano@gmail.com", subject, body, isHtml: true);
+                await _emailSender.SendEmailAsync(_emailSettings.ToEmail, subject, body, isHtml: true);
                 _logger.LogInformation("Email enviado para venda");
             }
             if (newState == -1)
@@ -49,7 +54,7 @@ public class StockAlertService
                 var body = $"<p>A ação <b>{_args.Ticker}</b> está cotada a <b>R$ {cotacao:N2}</b>, " +
                $"abaixo do preço de compra configurado (R$ {_args.BuyPrice:N2}).</p>";
 
-                await _emailSender.SendEmailAsync("felipe.cassano@gmail.com", subject, body, isHtml: true);
+                await _emailSender.SendEmailAsync(_emailSettings.ToEmail, subject, body, isHtml: true);
                 _logger.LogInformation("Email enviado para compra");
 
             }

@@ -3,7 +3,7 @@ using StockQuoteAlert.Models;
 
 namespace StockQuoteAlert.Services;
 
-public class Ticker
+public class ArgsParser
 {
 
     public Args? ValidateArgs(string[] args)
@@ -11,15 +11,24 @@ public class Ticker
         if (args.Length != 3)
         {
             Console.WriteLine("Argumento passado deve ser igual a 3");
+            Console.WriteLine("Uso: stock-quote-alert <ATIVO> < PRECO_VENDA > < PRECO_COMPRA >");
             return null;
         }
-        decimal sellPrice;
-        decimal buyPrice;
+        string sellPrice = args[1];
+        string buyPrice = args[2];
+        // Aceita virgula como argumento
+        if (sellPrice.Contains(","))
+        {
+            sellPrice = sellPrice.Replace(",", ".");
+        }
+        if (buyPrice.Contains(","))
+        {
+            buyPrice = buyPrice.Replace(",", ".");
+        }
 
         //  Trocado de NumberStyles.Number para NumberStyles.AllowDecimalPoint por que 22,34 virava 2234 
-
-        bool successSellPrice = decimal.TryParse(args[1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out sellPrice);
-        bool successBuyPrice = decimal.TryParse(args[2], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out buyPrice);
+        bool successSellPrice = decimal.TryParse(sellPrice, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal parsedSellPrice);
+        bool successBuyPrice = decimal.TryParse(buyPrice, NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out decimal parsedBuyPrice);
         if (!successSellPrice)
         {
             Console.WriteLine(" Erro ao tentar converter o preço de venda");
@@ -33,15 +42,15 @@ public class Ticker
 
         }
 
-        if (sellPrice <= 0 || buyPrice <= 0 || buyPrice == sellPrice || sellPrice < buyPrice)
+        if (parsedSellPrice <= 0 || parsedBuyPrice <= 0 || parsedBuyPrice == parsedSellPrice || parsedSellPrice < parsedBuyPrice)
         {
             Console.WriteLine("Regras para as entradas:");
             Console.Write("Valor de venda não pode ser 0 ");
-            Console.WriteLine(sellPrice <= 0 ? "X" : "✓");
+            Console.WriteLine(parsedSellPrice <= 0 ? "X" : "✓");
             Console.Write("Valor de compra não pode ser 0 ");
-            Console.WriteLine(buyPrice <= 0 ? "X" : "✓");
+            Console.WriteLine(parsedBuyPrice <= 0 ? "X" : "✓");
             Console.Write("Valor de venda deve ser maior que o valor de compra ");
-            Console.WriteLine(sellPrice <= buyPrice ? "X" : "✓");
+            Console.WriteLine(parsedSellPrice <= parsedBuyPrice ? "X" : "✓");
 
             return null;
 
@@ -55,8 +64,8 @@ public class Ticker
             return null;
 
         }
-        Console.WriteLine($"Usuário quer analisar a ação {ticker} com preço de venda: {sellPrice} e preço de compra: {buyPrice} ");
-        return new Args(Ticker: ticker, SellPrice: sellPrice, BuyPrice: buyPrice);
+        Console.WriteLine($"Usuário quer analisar a ação {ticker} com preço de venda: {parsedSellPrice} e preço de compra: {parsedBuyPrice} ");
+        return new Args(Ticker: ticker, SellPrice: parsedSellPrice, BuyPrice: parsedBuyPrice);
 
 
 
