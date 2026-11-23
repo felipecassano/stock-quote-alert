@@ -1,6 +1,4 @@
-using System.Net.Http.Headers;
 using System.Text.Json;
-using Microsoft.Extensions.Configuration;
 namespace StockQuoteAlert.Services;
 
 
@@ -15,25 +13,20 @@ public record QuoteResponse(Quote[]? Results);
 
 public class QuoteService
 {
-    private const string BaseUrl = "https://brapi.dev/api";
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
-    private HttpClient _httpClient;
+    private readonly HttpClient _httpClient;
+
     public QuoteService(HttpClient httpClient)
     {
         _httpClient = httpClient;
-        _httpClient.Timeout = TimeSpan.FromSeconds(30);
     }
+
     public async Task<Quote?> GetQuoteAsync(string Ticker)
     {
-        var config = new ConfigurationBuilder()
-          .AddUserSecrets<Program>()
-          .Build();
         try
         {
-
-            _httpClient.Timeout = TimeSpan.FromSeconds(30);
-            _httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", config["BRAPI_KEY"]);
-            var url = $"{BaseUrl}/quote/{Ticker}";
+            // relativo ao BaseAddress "https://brapi.dev/api/" (sem barra no início!)
+            var url = $"quote/{Ticker}";
             Console.WriteLine(url);
 
 

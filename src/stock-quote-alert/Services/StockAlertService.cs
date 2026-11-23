@@ -4,7 +4,7 @@ using StockQuoteAlert.Models;
 
 namespace StockQuoteAlert.Services;
 
-class StockAlertService
+public class StockAlertService
 {
     private readonly Args _args;
     private readonly QuoteService _quoteService;

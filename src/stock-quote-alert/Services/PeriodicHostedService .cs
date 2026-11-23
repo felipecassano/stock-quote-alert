@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 namespace StockQuoteAlert.Services;
 
 
-class PeriodicHostedService : BackgroundService
+public class PeriodicHostedService : BackgroundService
 {
     private readonly ILogger<PeriodicHostedService> _logger;
     private readonly IServiceScopeFactory _factory;
