@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!-- Copia o appsettings.json para a pasta do executável (bin/publish) -->
     <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 

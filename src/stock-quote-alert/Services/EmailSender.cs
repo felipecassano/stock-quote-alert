@@ -17,26 +17,36 @@ public class EmailSender : IEmailSender
         _emailSettings = options.Value;
     }
 
-    public async Task SendEmailAsync(string email, string subject, string message)
+    public async Task SendEmailAsync(string toEmail, string subject, string message, bool isHtml = true)
     {
         var emailMessage = new MimeMessage();
 
         emailMessage.From.Add(new MailboxAddress(_emailSettings.FromName, _emailSettings.FromEmail));
-        emailMessage.To.Add(new MailboxAddress("", email));
+        emailMessage.To.Add(new MailboxAddress("", toEmail));
 
         emailMessage.Subject = subject;
-        emailMessage.Body = new TextPart("plain")
-        {
-            Text = message
-        };
+        if (isHtml)
+            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Html) { Text = message };
+        else
+            emailMessage.Body = new TextPart(MimeKit.Text.TextFormat.Text) { Text = message };
+
 
         using (var client = new SmtpClient())
-        {
-            await client.ConnectAsync(_emailSettings.SmtpServer, _emailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
-            await client.AuthenticateAsync(_emailSettings.FromEmail, _emailSettings.Password);
-            await client.SendAsync(new SendRequest(emailMessage));
-            await client.DisconnectAsync(true);
-        }
+            try
+            {
+                await client.ConnectAsync(_emailSettings.SmtpServer, _emailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+                await client.AuthenticateAsync(_emailSettings.FromEmail, _emailSettings.Password);
+                await client.SendAsync(new SendRequest(emailMessage));
+            }
+            catch (Exception ex)
+            {
+                throw new InvalidOperationException("Erro ao enviar e-mail.", ex);
+            }
+            finally
+            {
+                await client.DisconnectAsync(true);
+
+            }
     }
 }
 
