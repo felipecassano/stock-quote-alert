@@ -16,8 +16,10 @@ public class Ticker
         decimal sellPrice;
         decimal buyPrice;
 
-        bool successSellPrice = decimal.TryParse(args[1], NumberStyles.Number, CultureInfo.InvariantCulture, out sellPrice);
-        bool successBuyPrice = decimal.TryParse(args[2], NumberStyles.Number, CultureInfo.InvariantCulture, out buyPrice);
+        //  Trocado de NumberStyles.Number para NumberStyles.AllowDecimalPoint por que 22,34 virava 2234 
+
+        bool successSellPrice = decimal.TryParse(args[1], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out sellPrice);
+        bool successBuyPrice = decimal.TryParse(args[2], NumberStyles.AllowDecimalPoint, CultureInfo.InvariantCulture, out buyPrice);
         if (!successSellPrice)
         {
             Console.WriteLine(" Erro ao tentar converter o preço de venda");
