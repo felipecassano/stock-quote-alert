@@ -38,7 +38,6 @@ public class EmailSender : IEmailSender
       ? _emailSettings.FromEmail
       : _emailSettings.Username;
 
-                Console.WriteLine($"user: {user}");
                 await client.ConnectAsync(_emailSettings.SmtpServer, _emailSettings.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
                 await client.AuthenticateAsync(user, _emailSettings.Password);
                 await client.SendAsync(new SendRequest(emailMessage));

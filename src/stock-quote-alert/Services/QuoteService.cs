@@ -1,7 +1,8 @@
 using System.Text.Json;
 using Microsoft.Extensions.Logging;
-namespace StockQuoteAlert.Services;
+using StockQuoteAlert.Interfaces;
 
+namespace StockQuoteAlert.Services;
 
 public record Quote(
     string Symbol,
@@ -12,7 +13,7 @@ public record Quote(
 
 public record QuoteResponse(Quote[]? Results);
 
-public class QuoteService
+public class QuoteService : IQuoteService
 {
     private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
     private readonly HttpClient _httpClient;
@@ -36,17 +37,19 @@ public class QuoteService
 
             if (!response.IsSuccessStatusCode)
             {
-                _logger.LogInformation($"Erro: {response.StatusCode}");
+                if (response.StatusCode.ToString() == "NotFound")
+                {
+                    _logger.LogInformation($"Ativo {Ticker} não encontrado. Encerrando a aplicação");
+                    Environment.Exit(1);
+                }
                 return null;
             }
 
             var responseBody = await response.Content.ReadAsStringAsync();
 
-
             QuoteResponse? data = JsonSerializer.Deserialize<QuoteResponse>(responseBody, JsonOptions);
 
             return data?.Results?[0];
-
 
         }
         catch (Exception ex)

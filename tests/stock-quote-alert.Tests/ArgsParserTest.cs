@@ -3,7 +3,7 @@ using StockQuoteAlert.Services;
 
 namespace stock_quote_alert.Tests;
 
-public class ValidateServiceTest
+public class ArgsParserTest
 {
     private readonly ArgsParser _ticker = new ArgsParser();
 
@@ -13,7 +13,7 @@ public class ValidateServiceTest
         // Cenário
         string[] args = ["PETR4", "22.67", "22.59"];
 
-        // Acão
+        // Ação
         Args? result = _ticker.ValidateArgs(args);
 
         //  Validação

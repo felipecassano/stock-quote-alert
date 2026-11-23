@@ -9,13 +9,13 @@ namespace StockQuoteAlert.Services;
 public class StockAlertService
 {
     private readonly Args _args;
-    private readonly QuoteService _quoteService;
+    private readonly IQuoteService _quoteService;
     private readonly IEmailSender _emailSender;
     private readonly ILogger<StockAlertService> _logger;
     private readonly EmailSettings _emailSettings;
 
 
-    public StockAlertService(Args args, QuoteService quoteService,
+    public StockAlertService(Args args, IQuoteService quoteService,
                                IEmailSender emailSender, ILogger<StockAlertService> logger, IOptions<EmailSettings> options)
     {
         _emailSettings = options.Value;

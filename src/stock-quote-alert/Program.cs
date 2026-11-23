@@ -26,7 +26,7 @@ if (string.IsNullOrWhiteSpace(emailSettings?.ToEmail) || string.IsNullOrWhiteSpa
 builder.Services.AddSingleton(argsResponse);
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 
-builder.Services.AddHttpClient<QuoteService>(client =>
+builder.Services.AddHttpClient<IQuoteService, QuoteService>(client =>
 {
     client.BaseAddress = new Uri("https://brapi.dev/api/");
 
