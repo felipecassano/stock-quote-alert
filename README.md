@@ -143,5 +143,5 @@ tests/stock-quote-alert.Tests/    # testes unitários (xUnit)
 
 Ferramentas de IA foram usadas como apoio pontual ao longo do projeto. A arquitetura, a regra de negócio, a escolha da API e bibliotecas, os testes e a revisão final do código foram conduzidos por mim.
 
-- **Claude Code (Anthropic — modelo [inserir versão exata]):** apoio na revisão de conformidade com os requisitos, ajustes de leitura/cópia do `appsettings.json` no build, configuração inicial de resiliência no `HttpClient`, workflow de CI e rascunho inicial deste README.
+- **Claude Code (Anthropic — modelo Opus 5.5):** apoio na revisão de conformidade com os requisitos, ajustes de leitura/cópia do `appsettings.json` no build, configuração inicial de resiliência no `HttpClient`, workflow de CI e rascunho inicial deste README.
 - **Gemini (Google):** dúvidas pontuais de sintaxe em C#, revisão de métodos e comparação de recursos do .NET/C# com outras linguagens com as quais já tenho familiaridade.

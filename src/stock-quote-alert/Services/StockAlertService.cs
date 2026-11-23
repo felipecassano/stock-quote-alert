@@ -44,7 +44,11 @@ public class StockAlertService
             }
 
         }
-        _logger.LogInformation("Nenhum email foi enviado, ação se manteve no mesmo estado do anterior");
+        else
+        {
+
+            _logger.LogInformation("Nenhum email foi enviado, ação se manteve no mesmo estado do anterior");
+        }
 
         return newState;
 
