@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -40,7 +41,14 @@ public class QuoteService : IQuoteService
                 if (response.StatusCode.ToString() == "NotFound")
                 {
                     _logger.LogInformation($"Ativo {Ticker} não encontrado. Encerrando a aplicação");
-                    Environment.ExitCode = 1;                                // define o código de saída...
+                    Environment.ExitCode = 1;
+                    _lifetime.StopApplication();
+                }
+
+                if (response.StatusCode == HttpStatusCode.Unauthorized)
+                {
+                    _logger.LogInformation($"Precisa de token para consultar o {Ticker}. Configure o BRAPI_KEY");
+                    Environment.ExitCode = 1;
                     _lifetime.StopApplication();
                 }
                 return null;

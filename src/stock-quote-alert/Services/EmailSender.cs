@@ -33,7 +33,7 @@ public class EmailSender : IEmailSender
         using (var client = new SmtpClient())
             try
             {
-                //  Usar o nome de usuário caso seja necessário. Se for pra usar o Email, deixar o nome de usuário vazio em appsettings.json
+                // usar o nome de usuário caso seja necessário. Se for pra usar o Email, deixar o nome de usuário vazio em appsettings.json
                 var user = string.IsNullOrWhiteSpace(_emailSettings.Username)
       ? _emailSettings.FromEmail
       : _emailSettings.Username;
