@@ -33,9 +33,6 @@ public class QuoteService : IQuoteService
         try
         {
             var url = $"quote/{Ticker}";
-            _logger.LogInformation(url);
-
-
             HttpResponseMessage response = await _httpClient.GetAsync(url);
 
             if (!response.IsSuccessStatusCode)
