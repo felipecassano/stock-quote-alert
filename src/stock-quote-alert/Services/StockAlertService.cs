@@ -35,11 +35,11 @@ public class StockAlertService
         {
             if (newState == 1)
             {
-                Console.WriteLine("Email enviado para venda");
+                _logger.LogInformation("Email enviado para venda");
             }
             if (newState == -1)
             {
-                Console.WriteLine("Email enviado para compra");
+                _logger.LogInformation("Email enviado para compra");
 
             }
 
