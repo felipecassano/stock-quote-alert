@@ -3,6 +3,8 @@ namespace StockQuoteAlert.Config;
 public class EmailSettings
 
 {
+    public string? ToEmail { get; set; }
+
     public string? SmtpServer
     {
         get; set;
